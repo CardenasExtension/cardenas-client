@@ -20,10 +20,10 @@ export function activate(context: vscode.ExtensionContext) {
 	const status = new Status();
 	status.show();
 
-	/* const provider = new StorySidebarProvider(context.extensionUri);
+	const provider = new StorySidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("cardenasPanel", provider)
-	); */
+	);
 
 	const provider2 = new StorySidebarProvider(context.extensionUri);
 	context.subscriptions.push(

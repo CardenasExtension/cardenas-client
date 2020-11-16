@@ -20,17 +20,17 @@ export class ViewCardenasPanel {
             : undefined;
 
         // If we already have a panel, show it.
-        /* if (ViewStoryPanel.currentPanel) {
-          ViewStoryPanel.currentPanel._panel.reveal(column);
-          ViewStoryPanel.currentPanel._story = story;
-          ViewStoryPanel.currentPanel._update();
+        if (ViewCardenasPanel.currentPanel) {
+            ViewCardenasPanel.currentPanel._panel.reveal(column);
+            ViewCardenasPanel.currentPanel._story = story;
+            ViewCardenasPanel.currentPanel._update();
           return;
-        } */
+        }
 
         // Otherwise, create a new panel.
         const panel = vscode.window.createWebviewPanel(
             ViewCardenasPanel.viewType,
-            "View Story",
+            "CARDENAS",
             column || vscode.ViewColumn.One,
             {
                 // Enable javascript in the webview
@@ -147,35 +147,9 @@ export class ViewCardenasPanel {
     }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
-        // // And the uri we use to load this script in the webview
-        const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "out", "compiled/view-story.js")
-        );
-
-        // Local path to css styles
-        const styleResetPath = vscode.Uri.joinPath(
-            this._extensionUri,
-            "media",
-            "reset.css"
-        );
-        const stylesPathMainPath = vscode.Uri.joinPath(
-            this._extensionUri,
-            "media",
-            "vscode.css"
-        );
-
-        // Uri to load styles into webview
-        const stylesResetUri = webview.asWebviewUri(styleResetPath);
-        const stylesMainUri = webview.asWebviewUri(stylesPathMainPath);
-        const cssUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "out", "compiled/view-story.css")
-        );
-
-        // Use a nonce to only allow specific scripts to be run
-        // const nonce = getNonce();
         const story = this._story;
 
-        this._panel.title = story.creatorUsername;
+        this._panel.title = story.filename;
 
         if (story.flair in FlairProvider.flairUriMap) {
             const both = FlairProvider.flairUriMap[story.flair];
@@ -187,7 +161,6 @@ export class ViewCardenasPanel {
             this._panel.iconPath = undefined;
         }
 
-        let currentUserId = "";
         try {
             /* const payload: any = jwt.decode(Util.getAccessToken());
             currentUserId = payload.userId; */
@@ -199,8 +172,7 @@ export class ViewCardenasPanel {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 			</head>
             <body>
-            adsdas
-                <button class="button load-more hidden">Load More</button>
+                ${this._story.code}
 			</body>
 			</html>`;
     }

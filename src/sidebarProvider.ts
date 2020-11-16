@@ -30,10 +30,11 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case "onStoryPress": {
+          console.log(data);
           if (!data.value) {
             return;
           }
-          // ViewCardenasPanel.createOrShow(this._extensionUri, data.value);
+          ViewCardenasPanel.createOrShow(this._extensionUri, data.value);
           break;
         }
         case "onError": {
@@ -84,7 +85,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             }
     
             .card {
-                height: 200px;
+                height: 230px;
             }
     
             .card[class|=col] {
@@ -110,9 +111,9 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             }
     
             .card__title {
-                height: 25px;
+                min-height: 25px;
                 // background: #7d7d7d;
-                background: #FFF;
+                background: transparent;
                 margin-top: 5px;
             }
     
@@ -171,8 +172,12 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-xs-5 card"
                         v-for="item in items" v-bind:key="item.id">
                         <div class="card__image" v-bind:style="'background-image: url(' + item.image +')'" style="background-repeat: no-repeat; background-size: cover"></div>
-                        <div class="card__title"><span class="text-white">{{item.filename}}</span></div>
+                        <div class="card__title"><span class="text-white">{{item.filename}} ({{item.language}})</span></div>
                         <div class="card__version"><b class="text-primary">{{item.create_by}}</b></div>
+                        <div class="col-12 d-flex justify-content-between" style="position: absolute; top: 10;right: 10;">
+                          <button class="btn btn-sm btn-ligth"><i class="text-danger glyphicon glyphicon-heart"></i><span class="text-white"> 12k</span></button>
+                          <button class="btn btn-sm btn-ligth" v-on:click="selectOne(item)">View</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -182,7 +187,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           var app = new Vue({
             el: '#app',
             data: {
-              items: [{"id":"7","code":'',"filename":"Unnamed 1","image":"https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2020%2F03%2Fcode-1076536_1920.jpg&signature=2e75357e1e9b104caa33cb3a545dcbeb","language":"html","create_by":"Juan Mastrangelo","create_at":"2020-11-16 16:37:01"}]
+              items: [{"id":"7","code":'asdasddsa',"filename":"Unnamed 1","image":"https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2020%2F03%2Fcode-1076536_1920.jpg&signature=2e75357e1e9b104caa33cb3a545dcbeb","language":"html","create_by":"Juan Mastrangelo","create_at":"2020-11-16 16:37:01"}]
             },
             methods: {
               search: function() {
@@ -195,6 +200,9 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 .catch(function (error) {
                   vscode.postMessage({ type: 'onError', value: error.toString() });
                 }).then(() => {document.getElementById('search_concept').disabled = false})
+              },
+              selectOne: function(item) {
+                vscode.postMessage({ type: 'onStoryPress', value: item });
               }
             }
           })
