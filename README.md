@@ -1,5 +1,5 @@
 # Cardenas (VSCode Extension)
-Descarga plantillas, algoritmos de otros usuarios. Almacena tus codigos en un lugar seguro para utilizarlos cuando quieras.
+Descarga plantillas y algoritmos de otros usuarios. Almacena tus codigos en un lugar seguro para utilizarlos cuando quieras.
 
 ### Screenshots
 <div align="center">
