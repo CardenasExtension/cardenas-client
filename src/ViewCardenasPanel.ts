@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { FlairProvider } from "./FlairProvider";
+import { getNonce } from "./getNonce";
 
 export class ViewCardenasPanel {
     /**
@@ -24,7 +25,7 @@ export class ViewCardenasPanel {
             ViewCardenasPanel.currentPanel._panel.reveal(column);
             ViewCardenasPanel.currentPanel._story = story;
             ViewCardenasPanel.currentPanel._update();
-          return;
+            return;
         }
 
         // Otherwise, create a new panel.
@@ -165,15 +166,21 @@ export class ViewCardenasPanel {
             /* const payload: any = jwt.decode(Util.getAccessToken());
             currentUserId = payload.userId; */
         } catch { }
+        
+        const nonce = getNonce();
 
+        
         return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="Content-Security-Policy" content="default-src ${''}; img-src https: data:; style-src ${
+                    webview.cspSource
+                  }; script-src 'nonce-${nonce}';">
 			</head>
             <body>
-                ${this._story.code}
-			</body>
-			</html>`;
+            <card><xmp>${this._story.code}</xmp><card>
+            </body>
+        </html>`;
     }
 }

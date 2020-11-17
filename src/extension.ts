@@ -20,17 +20,17 @@ export function activate(context: vscode.ExtensionContext) {
 	const status = new Status();
 	status.show();
 
+	// Code Preview
 	const provider = new StorySidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("cardenasPanel", provider)
 	);
 
+	// Sidebar
 	const provider2 = new StorySidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("cardenas-full", provider2)
 	);
-
-
 
 	vscode.commands.registerCommand("cardenas.saveFile", async () => {
 		if (!true) {
@@ -52,6 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 		  return;
 		}
 
+
 		filename = vscode.window.activeTextEditor.document.fileName;
 		startingText = vscode.window.activeTextEditor.document.getText();
 		language = vscode.window.activeTextEditor.document.languageId;
@@ -63,11 +64,15 @@ export function activate(context: vscode.ExtensionContext) {
 		formData.append('create_by', '12');
 		formData.append('language', language);
 
-		fetch('http://localhost/www/Cardenas/src/controllers/publish.php', {method: 'POST', body: formData})
+		fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
 		.then(response => response.json())
 		.then(data => {
 			vscode.window.showInformationMessage(
 				filename + " uploaded successfully"
+			);
+		}).catch(e => {
+			vscode.window.showErrorMessage(
+				e
 			);
 		})
 	  });

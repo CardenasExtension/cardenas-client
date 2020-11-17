@@ -30,7 +30,6 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case "onStoryPress": {
-          console.log(data);
           if (!data.value) {
             return;
           }
@@ -45,7 +44,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "refreshData": {
-          fetch('http://localhost/www/Cardenas/src/controllers/publish.php')
+          fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php')
           .then(response => response.json())
           .then(data => console.log(data))
           break;
@@ -58,14 +57,14 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     const styleResetUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
     );
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
-    );
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
     );
     const styleVSCodeUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+    );
+    const fetchUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "fetch.ts")
     );
 
     const nonce = getNonce();
@@ -140,7 +139,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             <link href="${styleMainUri}" rel="stylesheet">
 
             <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.5.0/fetch.min.js"></script>
     </head>
     
     <body>
@@ -187,23 +186,31 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           var app = new Vue({
             el: '#app',
             data: {
-              items: [{"id":"7","code":'asdasddsa',"filename":"Unnamed 1","image":"https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2020%2F03%2Fcode-1076536_1920.jpg&signature=2e75357e1e9b104caa33cb3a545dcbeb","language":"html","create_by":"Juan Mastrangelo","create_at":"2020-11-16 16:37:01"}]
+              items: []
             },
             methods: {
               search: function() {
                 document.getElementById('search_concept').disabled = true;
-                var that = this;
-                axios.get('http://localhost/www/Cardenas/src/controllers/publish.php')
-                .then(function (response) {
-                  that.items = response;
+                
+                fetch("https://cardenasvscode.000webhostapp.com/controllers/publish.php", {method: 'GET'})
+                .then(response => response.text())
+                .then(result => {
+                  document.getElementById('search_concept').disabled = false;
+                  this.items = JSON.parse(result);
                 })
-                .catch(function (error) {
-                  vscode.postMessage({ type: 'onError', value: error.toString() });
-                }).then(() => {document.getElementById('search_concept').disabled = false})
+                .catch(error => {
+                  vscode.postMessage({ type: 'onError', value: error.message });
+                  document.getElementById('search_concept').disabled = false;
+                });
+
+
               },
               selectOne: function(item) {
                 vscode.postMessage({ type: 'onStoryPress', value: item });
               }
+            },
+            mounted() {
+              this.search();
             }
           })
 
@@ -212,7 +219,17 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
 
           function changeFilter(val) {
             document.getElementById('search_concept').innerHTML = val;
-            vscode.postMessage({ type: 'refreshData' });
+
+            fetch("https://cardenasvscode.000webhostapp.com/controllers/publish.php", {method: 'GET'})
+            .then(response => response.text())
+            .then(result => {
+              document.getElementById('search_concept').disabled = false;
+              this.items = JSON.parse(result);
+            })
+            .catch(error => {
+              vscode.postMessage({ type: 'onError', value: error.message });
+              document.getElementById('search_concept').disabled = false;
+            });
           }
 
 

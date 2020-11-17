@@ -10,7 +10,9 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:cardenas.helloWorld",
+		"onCommand:cardenas.saveFile",
+		"onView:cardenas-full",
+		"onView:cardenasPanel",
 		"*"
 	],
 	"main": "./out/extension.js",
