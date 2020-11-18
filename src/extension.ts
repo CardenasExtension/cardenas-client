@@ -7,6 +7,7 @@ import fetch from "node-fetch";
 const FormData = require('form-data');
 
 
+import {getSettings} from './utils';
 
 let filename = "untitled";
 let data: Array<[number, Array<vscode.TextDocumentContentChangeEvent>]> = [];
@@ -57,18 +58,40 @@ export function activate(context: vscode.ExtensionContext) {
 		startingText = vscode.window.activeTextEditor.document.getText();
 		language = vscode.window.activeTextEditor.document.languageId;
 
+		const extensionSettings = getSettings('codesnap', [
+			'backgroundColor',
+			'boxShadow',
+			'containerPadding',
+			'roundedCorners',
+			'showWindowControls',
+			'showWindowTitle',
+			'showLineNumbers',
+			'realLineNumbers',
+			'transparentBackground',
+			'target'
+		  ]);
+
+		  
+		const editorSettings = getSettings('editor', ['fontLigatures', 'tabSize']);
+		const editor = vscode.window.activeTextEditor;
+		if (editor) editorSettings.tabSize = editor.options.tabSize;
+		  
+		const activeFileName = editor.document.uri.path.split('/').pop();
+
 		var formData = new FormData();
 		formData.append('code', startingText);
 		formData.append('image', '');
-		formData.append('filename', filename);
+		formData.append('filename', activeFileName);
 		formData.append('create_by', '12');
 		formData.append('language', language);
+		formData.append('extensionSettings', JSON.stringify(extensionSettings));
+		formData.append('editorSettings', JSON.stringify(editorSettings));
 
 		fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
 		.then(response => response.json())
 		.then(data => {
 			vscode.window.showInformationMessage(
-				filename + " uploaded successfully"
+				activeFileName + " uploaded successfully"
 			);
 		}).catch(e => {
 			vscode.window.showErrorMessage(

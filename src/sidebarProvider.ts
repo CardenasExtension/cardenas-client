@@ -54,17 +54,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
-    );
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
-    );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
-    );
-    const fetchUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "fetch.ts")
+    const styleSideBar = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "sidebarStyle.css")
     );
 
     const nonce = getNonce();
@@ -74,72 +65,16 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        </link>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <style>
-            body {
-                background: transparent !important;
-            }
-    
-            .card {
-                height: 230px;
-            }
-    
-            .card[class|=col] {
-                float: none;
-                display: inline-block;
-                position: relative;
-                background: var(--vscode-input-background);
-                margin-top: 12px;
-                margin-bottom: 12px;
-                border: none;
-                vertical-align: top;
-                border-radius: 10px;
-            }
-    
-    
-            .card__image {
-                height: 100px;
-                width: 100%;
-                -o-object-fit: cover;
-                object-fit: cover;
-                background: #949494;
-                margin-top: 10px;
-            }
-    
-            .card__title {
-                min-height: 25px;
-                // background: #7d7d7d;
-                background: transparent;
-                margin-top: 5px;
-            }
-    
-            .card__version {
-                position: absolute;
-                right: 10px;
-                bottom: 10px;
-                min-height: 15px;
-                min-width: 70px;
-                // background: #ababab;
-                background: #FFF;
-                padding: 5px;
-            }
-            @media screen and (max-width: 600px) {
-              .card[class|=col] {
-                width: 90%;
-                margin: 6px auto;
-              }
-            }
-        </style>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link href="${styleResetUri}" rel="stylesheet">
-            <link href="${styleVSCodeUri}" rel="stylesheet">
-            <link href="${styleMainUri}" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+        <link href="${styleSideBar}" rel="stylesheet" type="text/css" media="screen" />
+        
 
-            <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.5.0/fetch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.5.0/fetch.min.js"></script>
     </head>
     
     <body>
@@ -148,17 +83,14 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             <div class="row">
                 <div class="col-12 p-0">
                     <div class="input-group">
-                        <div class="input-group-btn search-panel">
+                        <div class="input-group-btn search-panel dropdown">
                             <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
                                 <span id="search_concept">All</span> <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#" onClick="changeFilter('All')">All</a></li>
-                                <li><a href="#" onClick="changeFilter('Templates')">Templates</a></li>
-                                <li><a href="#" onClick="changeFilter('Algorithms')">Algorithms</a></li>
-                                </li>
-                                <li class="divider"></li>
-                                <li><a href="#all"></a></li>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onClick="changeFilter('All')">All</a></li>
+                                <li><a class="dropdown-item" href="#" onClick="changeFilter('Templates')">Templates</a></li>
+                                <li><a class="dropdown-item" href="#" onClick="changeFilter('Algorithms')">Algorithms</a></li>
                             </ul>
                         </div>
                         <input type="hidden" name="search_param" value="all" id="search_param">
@@ -166,20 +98,26 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                     </div>
                 </div>
             </div>
-            <section class="col-12 p-0 m-0" style="margin-top: 20px">
-                <div class="row-fluid p-0 col-12 text-center">
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-xs-5 card"
-                        v-for="item in items" v-bind:key="item.id">
-                        <div class="card__image" v-bind:style="'background-image: url(' + item.image +')'" style="background-repeat: no-repeat; background-size: cover"></div>
-                        <div class="card__title"><span class="text-white">{{item.filename}} ({{item.language}})</span></div>
-                        <div class="card__version"><b class="text-primary">{{item.create_by}}</b></div>
-                        <div class="col-12 d-flex justify-content-between" style="position: absolute; top: 10;right: 10;">
-                          <button class="btn btn-sm btn-ligth"><i class="text-danger glyphicon glyphicon-heart"></i><span class="text-white"> 12k</span></button>
-                          <button class="btn btn-sm btn-ligth" v-on:click="selectOne(item)">View</button>
-                        </div>
-                    </div>
+          </div>
+            
+            <div class="row mt-3">
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 my-2" v-for="item in items" v-bind:key="item.id">
+                <div class="col-12 p-0 window">
+                  <div class="window-header">
+                    <div class="action-buttons"></div>
+                    <button class="btn btn-sm btn-ligth language" v-on:click="selectOne(item)">View</button>
+                  </div>
+                  <div class="window-body">
+                      <textarea class="code-input">
+// {{item.filename}}
+// using {{item.language}}
+// likes 12k
+// By {{item.create_by}}
+                      </textarea>
+                      <pre class="code-output"><code class="language-javascript"></code></pre>
+                  </div>
                 </div>
-            </section>
+              </div>
             </div>
         </body>
         <script nonce="${nonce}">

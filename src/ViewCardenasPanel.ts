@@ -169,17 +169,78 @@ export class ViewCardenasPanel {
         
         const nonce = getNonce();
 
+        const viewStyleUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, "media", "viewStyle.css")
+        );
+        const viewScriptUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, "media", "viewScript.js")
+        );
+
         
         return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta http-equiv="Content-Security-Policy" content="default-src ${''}; img-src https: data:; style-src ${
-                    webview.cspSource
-                  }; script-src 'nonce-${nonce}';">
+                <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"></link>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+
+                <link href="${viewStyleUri}" rel="stylesheet" type="text/css" media="screen">
+                <script src="${viewScriptUri}"></script>
 			</head>
-            <body>
-            <card><xmp>${this._story.code}</xmp><card>
+            <body style="margin: 0!important;padding:0!important;">
+                <div id="app" class="col-12 p-3">
+                
+                <h2 class="title mb-4">
+                    ${this._story.filename}
+                    <small>by ${this._story.create_by} using ${this._story.language}</small>
+                </h2>
+
+                <section class='code-editor' style="margin-top: 0px;">
+                    <div class='controls'>
+                        <span v-if="coping">Copied</span>
+                        <i class="fa fa-clipboard fullscreen copyButton" v-on:click="copied()" data-clipboard-target="#foo"></i>
+                        <i class="fa fa-expand accordion"></i>
+                        <i class="fa fa-chevron-up accordion"></i>
+                    </div>
+                    <div class='embed-nav'>
+                    <ul class="m-0">
+                        <li style="list-style: none;">
+                        <a href='#html-box' class='active'>
+                            ${this._story.language}
+                        </a>
+                    </ul>
+                    <div class='logo-wrap'>
+                        <a href='#' target='_blank' title='Edit on CodePen'>
+                        Edit on codepen
+                        </a>
+                    </div>
+                    </div>
+                    <pre class='line-numbers'>
+                        <code class='language-html' id="foo">
+${this._story.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                        </code>
+                    </pre>
+                </section>
+                </div>
+
+                <script nonce="${nonce}">
+                    var app = new Vue({
+                        el: '#app',
+                        data: {
+                            coping: false
+                        },
+                        methods: {
+                            copied: function() {
+                                this.coping = true;
+                            }
+                        },
+                        mounted() {
+                        }
+                    })
+                    new ClipboardJS('.copyButton');
+                </script>
             </body>
         </html>`;
     }
