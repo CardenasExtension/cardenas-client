@@ -3,9 +3,8 @@ import { window, StatusBarItem, StatusBarAlignment } from "vscode";
 
 import { StorySidebarProvider } from './sidebarProvider';
 import { Status } from './StatusBar';
-import fetch from "node-fetch";
-const FormData = require('form-data');
 
+import { multiStepInput } from './submitInput';
 
 import {getSettings} from './utils';
 
@@ -53,51 +52,20 @@ export function activate(context: vscode.ExtensionContext) {
 		  return;
 		}
 
-
-		filename = vscode.window.activeTextEditor.document.fileName;
-		startingText = vscode.window.activeTextEditor.document.getText();
-		language = vscode.window.activeTextEditor.document.languageId;
-
-		const extensionSettings = getSettings('codesnap', [
-			'backgroundColor',
-			'boxShadow',
-			'containerPadding',
-			'roundedCorners',
-			'showWindowControls',
-			'showWindowTitle',
-			'showLineNumbers',
-			'realLineNumbers',
-			'transparentBackground',
-			'target'
-		  ]);
-
-		  
-		const editorSettings = getSettings('editor', ['fontLigatures', 'tabSize']);
-		const editor = vscode.window.activeTextEditor;
-		if (editor) editorSettings.tabSize = editor.options.tabSize;
-		  
-		const activeFileName = editor.document.uri.path.split('/').pop();
-
-		var formData = new FormData();
-		formData.append('code', startingText);
-		formData.append('image', '');
-		formData.append('filename', activeFileName);
-		formData.append('create_by', '12');
-		formData.append('language', language);
-		formData.append('extensionSettings', JSON.stringify(extensionSettings));
-		formData.append('editorSettings', JSON.stringify(editorSettings));
-
-		fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
-		.then(response => response.json())
-		.then(data => {
-			vscode.window.showInformationMessage(
-				activeFileName + " uploaded successfully"
-			);
-		}).catch(e => {
-			vscode.window.showErrorMessage(
-				e
-			);
-		})
+		const options: { [key: string]: (context: vscode.ExtensionContext) => Promise<void> } = {
+			multiStepInput,
+		};
+		const quickPick = window.createQuickPick();
+		quickPick.items = Object.keys(options).map(label => ({ label }));
+		quickPick.onDidChangeActive(selection => {
+			console.log(selection);
+			if (selection[0]) {
+				options[selection[0].label](context)
+					.catch(console.error);
+			}
+		});
+		quickPick.onDidHide(() => quickPick.dispose());
+		quickPick.show();
 	  });
 	
 }

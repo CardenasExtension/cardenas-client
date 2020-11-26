@@ -85,12 +85,14 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                     <div class="input-group">
                         <div class="input-group-btn search-panel dropdown">
                             <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
-                                <span id="search_concept">All</span> <span class="caret"></span>
+                                <span id="search_concept">
+                                {{typeSelected}}
+                                </span> <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" onClick="changeFilter('All')">All</a></li>
-                                <li><a class="dropdown-item" href="#" onClick="changeFilter('Templates')">Templates</a></li>
-                                <li><a class="dropdown-item" href="#" onClick="changeFilter('Algorithms')">Algorithms</a></li>
+                                <li><a class="dropdown-item" href="#" v-on:click="changeFilter('All')">All</a></li>
+                                <li><a class="dropdown-item" href="#" v-on:click="changeFilter('Template')">Template</a></li>
+                                <li><a class="dropdown-item" href="#" v-on:click="changeFilter('Algorithm')">Algorithm</a></li>
                             </ul>
                         </div>
                         <input type="hidden" name="search_param" value="all" id="search_param">
@@ -100,7 +102,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
             </div>
           </div>
             
-            <div class="row mt-3">
+            <div class="row mt-3" v-if="items">
               <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 my-2" v-for="item in items" v-bind:key="item.id">
                 <div class="col-12 p-0 window">
                   <div class="window-header">
@@ -119,18 +121,27 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 </div>
               </div>
             </div>
+            
+            <div class="col-12" v-if="items && items.length === 0">
+              <small class="text-primary">
+                No results found
+              </small>
+            </div>
         </body>
         <script nonce="${nonce}">
           var app = new Vue({
             el: '#app',
             data: {
-              items: []
+              items: [],
+              typeSelected: 'All'
             },
             methods: {
               search: function() {
+                const searchInput = document.getElementById('searchInput').value;
                 document.getElementById('search_concept').disabled = true;
                 
-                fetch("https://cardenasvscode.000webhostapp.com/controllers/publish.php", {method: 'GET'})
+                const type = this.typeSelected === 'All' ? '' : "&type=" + this.typeSelected;
+                fetch("https://cardenasvscode.000webhostapp.com/controllers/publish.php?search=" + searchInput + type, {method: 'GET'})
                 .then(response => response.text())
                 .then(result => {
                   document.getElementById('search_concept').disabled = false;
@@ -140,11 +151,13 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                   vscode.postMessage({ type: 'onError', value: error.message });
                   document.getElementById('search_concept').disabled = false;
                 });
-
-
               },
               selectOne: function(item) {
                 vscode.postMessage({ type: 'onStoryPress', value: item });
+              },
+              changeFilter(val) {
+                this.typeSelected = val;
+                this.search();
               }
             },
             mounted() {
@@ -153,25 +166,6 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           })
 
           const vscode = acquireVsCodeApi();
-
-
-          function changeFilter(val) {
-            document.getElementById('search_concept').innerHTML = val;
-
-            fetch("https://cardenasvscode.000webhostapp.com/controllers/publish.php", {method: 'GET'})
-            .then(response => response.text())
-            .then(result => {
-              document.getElementById('search_concept').disabled = false;
-              this.items = JSON.parse(result);
-            })
-            .catch(error => {
-              vscode.postMessage({ type: 'onError', value: error.message });
-              document.getElementById('search_concept').disabled = false;
-            });
-          }
-
-
-          
 
       </script>
     </html>`;
