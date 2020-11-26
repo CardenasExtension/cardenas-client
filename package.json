@@ -2,6 +2,7 @@
 	"name": "cardenas",
 	"displayName": "Cardenas",
 	"description": "Free templates and algorithms",
+	"publisher": "juansemastrangelo",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.51.0"

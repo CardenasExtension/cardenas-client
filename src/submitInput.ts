@@ -108,6 +108,8 @@ export async function multiStepInput(context: ExtensionContext) {
 	const language = editor.document.languageId;
 	const activeFileName = editor.document.uri.path.split('/').pop();
 
+	const type = typeof state.resourceGroup !== 'string' && state.resourceGroup.label;
+
 	var formData = new FormData();
 	formData.append('code', startingText);
 	formData.append('image', '');
@@ -115,7 +117,7 @@ export async function multiStepInput(context: ExtensionContext) {
 	formData.append('create_by', '12');
 	formData.append('language', language);
 	formData.append('description', state.name);
-	formData.append('type', state.resourceGroup.label);
+	formData.append('type', type);
 
 	fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
 	.then(response => response.json())
