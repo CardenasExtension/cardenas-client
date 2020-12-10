@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { QuickPickItem, window, Disposable, CancellationToken, QuickInputButton, QuickInput, ExtensionContext, QuickInputButtons, Uri } from 'vscode';
 
 import fetch from "node-fetch";
+import { Credentials } from './credentials';
 const FormData = require('form-data');
 
 
@@ -39,7 +40,7 @@ export async function multiStepInput(context: ExtensionContext) {
 		return state as State;
 	}
 
-	const title = 'Create Application Service';
+	const title = 'Upload snippet';
 
 	async function pickResourceGroup(input: MultiStepInput, state: Partial<State>) {
 		const pick = await input.showQuickPick({
@@ -110,15 +111,20 @@ export async function multiStepInput(context: ExtensionContext) {
 
 	const type = typeof state.resourceGroup !== 'string' && state.resourceGroup.label;
 
+	
+	const credentials = new Credentials();
+	await credentials.initialize(context);
+	const octokit = await credentials.getOctokit();
+	const userInfo = await octokit.users.getAuthenticated();
 	var formData = new FormData();
 	formData.append('code', startingText);
+	formData.append('idUser', userInfo.data.id);
 	formData.append('image', '');
 	formData.append('filename', activeFileName);
 	formData.append('create_by', '12');
 	formData.append('language', language);
 	formData.append('description', state.name);
 	formData.append('type', type);
-
 	fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
 	.then(response => response.json())
 	.then(data => {

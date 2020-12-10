@@ -6,6 +6,15 @@
   box-sizing: border-box;
 }
 
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+.nav-link:focus {
+  border: none;
+  outline: none;
+}
+
 body {
   background-color: transparent;
 }

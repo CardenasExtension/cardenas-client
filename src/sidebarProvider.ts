@@ -2,18 +2,23 @@ import * as vscode from "vscode";
 import { ViewCardenasPanel } from "./ViewCardenasPanel";
 import fetch from "node-fetch";
 
-import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
+import { Credentials } from "./credentials";
+import FormData = require("form-data");
 
 export class StorySidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
   _doc?: vscode.TextDocument;
+  userInfo: any = null;
+  context: vscode.ExtensionContext;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext, userInfo: any) {
+    this.context = context;
+    this.userInfo = userInfo;
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
-    context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
     this._view = webviewView;
@@ -26,6 +31,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
@@ -47,6 +54,15 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php')
           .then(response => response.json())
           .then(data => console.log(data))
+          break;
+        }
+        case "like": {
+          var formData = new FormData();
+          formData.append('idUser', this.userInfo.data.id);
+          formData.append('idPost', data.value.id);
+          fetch('https://cardenasvscode.000webhostapp.com/controllers/like.php', {method: 'POST', body: formData})
+          .then(response => response.json())
+          .then(data => vscode.window.showInformationMessage('Liked snippet'))
           break;
         }
       }
@@ -84,7 +100,7 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 <div class="col-12 p-0">
                     <div class="input-group">
                         <div class="input-group-btn search-panel dropdown">
-                            <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-sm btn-dark dropdown-toggle" data-toggle="dropdown">
                                 <span id="search_concept">
                                 {{typeSelected}}
                                 </span> <span class="caret"></span>
@@ -96,37 +112,48 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                             </ul>
                         </div>
                         <input type="hidden" name="search_param" value="all" id="search_param">
-                        <input @keyup.enter="search()" type="text" class="form-control" style="padding-left: 10px" id="searchInput" placeholder="Search...">
+                        <input @keyup.enter="search()" type="text" class="form-control form-control-sm" style="padding-left: 10px" id="searchInput" placeholder="Search...">
                     </div>
                 </div>
             </div>
           </div>
-            
-            <div class="row mt-3" v-if="items">
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 my-2" v-for="item in items" v-bind:key="item.id">
-                <div class="col-12 p-0 window">
-                  <div class="window-header">
-                    <div class="action-buttons"></div>
-                    <button class="btn btn-sm btn-ligth language" v-on:click="selectOne(item)">View</button>
+
+          <ul class="nav nav-pills mt-3 mb-1" id="pills-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active py-1" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link py-1" id="pills-liked-tab" data-toggle="pill" href="#pills-liked" role="tab" aria-controls="pills-liked" aria-selected="false">Liked</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
+              <div class="card-deck" v-if="items" style="margin-top: 30px">
+                <div class="card" v-for="item in items" v-bind:key="item.id">
+                  <div class="card-body">
+                    <h5 class="card-title">{{item.filename}}</h5>
+                    <small class="card-text">{{item.description}}</small>
                   </div>
-                  <div class="window-body">
-                      <textarea class="code-input">
-// {{item.filename}}
-// using {{item.language}}
-// likes 12k
-// By {{item.create_by}}
-                      </textarea>
-                      <pre class="code-output"><code class="language-javascript"></code></pre>
+                  <!-- <div class="card-footer">
+                    <small class="text-muted">{{item.create_by}}</small>
+                  </div> -->
+                  <div class="row mt-2 mr-2" style="position: absolute;top: 0;right: 0">
+                    <button v-on:click="like(item)" class="btn btn-sm btn-light mr-2">❤️ ️<span v-bind:id="'id'+item.id">{{item.likes}}</span></button>
+                    <button class="btn btn-sm btn-light" v-on:click="selectOne(item)">View</button>
                   </div>
                 </div>
               </div>
+                
+              <div class="col-12" v-if="items && items.length === 0">
+                <small class="text-primary">
+                  No results found
+                </small>
+              </div>
             </div>
-            
-            <div class="col-12" v-if="items && items.length === 0">
-              <small class="text-primary">
-                No results found
-              </small>
+            <div class="tab-pane fade" id="pills-liked" role="tabpanel" aria-labelledby="pills-liked-tab">
+
             </div>
+          </div>
         </body>
         <script nonce="${nonce}">
           var app = new Vue({
@@ -150,6 +177,24 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
                 .catch(error => {
                   vscode.postMessage({ type: 'onError', value: error.message });
                   document.getElementById('search_concept').disabled = false;
+                });
+              },
+              like: function(item) {
+                var formData = new FormData();
+                formData.append('idUser', ${this.userInfo.data.id});
+                formData.append('idPost', item.id);
+                fetch('https://cardenasvscode.000webhostapp.com/controllers/like.php', {method: 'POST', body: formData})
+                .then(response => response.text())
+                .then(result => {
+                  const likes = document.getElementById('id'+item.id).innerHTML;
+                  if (result === 'true') {
+                    document.getElementById('id'+item.id).innerHTML = +likes + 1;
+                  } else {
+                    document.getElementById('id'+item.id).innerHTML = +likes - 1;
+                  }
+                })
+                .catch(error => {
+                  vscode.postMessage({ type: 'onError', value: error.message });
                 });
               },
               selectOne: function(item) {

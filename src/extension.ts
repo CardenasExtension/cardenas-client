@@ -1,46 +1,53 @@
 import * as vscode from 'vscode';
-import { window, StatusBarItem, StatusBarAlignment } from "vscode";
+import { window } from "vscode";
+import { Credentials } from './credentials';
 
 import { StorySidebarProvider } from './sidebarProvider';
 import { Status } from './StatusBar';
 
 import { multiStepInput } from './submitInput';
 
-import {getSettings} from './utils';
-
-let filename = "untitled";
-let data: Array<[number, Array<vscode.TextDocumentContentChangeEvent>]> = [];
-let startingText = "";
-let language = "";
-
-export function activate(context: vscode.ExtensionContext) {
-	console.log('Cardenas active');
-
-	
+export async function activate(context: vscode.ExtensionContext) {
 	const status = new Status();
 	status.show();
+	const credentials = new Credentials();
+	await credentials.initialize(context);
+	const octokit = await credentials.getOctokit();
+	const userInfo = await octokit.users.getAuthenticated();
 
 	// Code Preview
-	const provider = new StorySidebarProvider(context.extensionUri);
+	const provider = new StorySidebarProvider(context.extensionUri, context, userInfo);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("cardenasPanel", provider)
 	);
 
 	// Sidebar
-	const provider2 = new StorySidebarProvider(context.extensionUri);
+	const provider2 = new StorySidebarProvider(context.extensionUri, context, userInfo);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("cardenas-full", provider2)
 	);
 
+	vscode.commands.registerCommand('cardenas.authenticate', async () => {
+		vscode.window.showInformationMessage(`Cardenas: Login as ${userInfo.data.login}`);
+	});
+
+	
+	vscode.commands.registerCommand("cardenas.logout", async () => {
+	})
+
 	vscode.commands.registerCommand("cardenas.saveFile", async () => {
-		if (!true) {
+		const octokit = await credentials.getOctokit();
+		const userInfo = await octokit.users.getAuthenticated();
+		if (!userInfo) {
 		  const choice = await vscode.window.showInformationMessage(
-			`You need to login to GitHub to record a story, would you like to continue?`,
+			`You need to login to GitHub to upload a resource, would you like to continue?`,
 			"Yes",
 			"Cancel"
 		  );
 		  if (choice === "Yes") {
-			// authenticate();
+			vscode.commands.executeCommand('cardenas.authenticate', async () => {
+				vscode.commands.executeCommand('cardenas.saveFile');
+			});
 		  }
 		  return;
 		}
@@ -58,7 +65,6 @@ export function activate(context: vscode.ExtensionContext) {
 		const quickPick = window.createQuickPick();
 		quickPick.items = Object.keys(options).map(label => ({ label }));
 		quickPick.onDidChangeActive(selection => {
-			console.log(selection);
 			if (selection[0]) {
 				options[selection[0].label](context)
 					.catch(console.error);

@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
 
 export class ViewCardenasPanel {
@@ -151,16 +150,6 @@ export class ViewCardenasPanel {
         const story = this._story;
 
         this._panel.title = story.filename;
-
-        if (story.flair in FlairProvider.flairUriMap) {
-            const both = FlairProvider.flairUriMap[story.flair];
-            this._panel.iconPath = {
-                light: both,
-                dark: both,
-            };
-        } else {
-            this._panel.iconPath = undefined;
-        }
 
         try {
             /* const payload: any = jwt.decode(Util.getAccessToken());

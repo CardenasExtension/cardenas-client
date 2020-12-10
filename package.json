@@ -3,7 +3,12 @@
 	"displayName": "Cardenas",
 	"description": "Free templates and algorithms",
 	"publisher": "juansemastrangelo",
-	"version": "0.0.1",
+	"icon": "media/icon.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/JuanseMastrangelo/Cardenas"
+	},
+	"version": "1.0.3",
 	"engines": {
 		"vscode": "^1.51.0"
 	},
@@ -22,6 +27,14 @@
 			{
 				"command": "cardenas.saveFile",
 				"title": "Cardenas: SaveFile"
+			},
+			{
+				"command": "cardenas.authenticate",
+				"title": "Cardenas: Login using Github"
+			},
+			{
+				"command": "cardenas.logout",
+				"title": "Cardenas: Log out"
 			}
 		],
 		"viewsContainers": {
@@ -29,7 +42,7 @@
 				{
 					"id": "search-icon",
 					"title": "Cardenas",
-					"icon": "media/circle-s-outline.svg"
+					"icon": "media/dnd.png"
 				}
 			]
 		},
@@ -39,7 +52,7 @@
 					"type": "webview",
 					"id": "cardenas-full",
 					"name": "Cardenas",
-					"icon": "media/circle-s-outline.svg",
+					"icon": "media/dnd.png",
 					"contextualTitle": "Cardenas"
 				}
 			],
@@ -63,7 +76,8 @@
 	"dependencies": {
 		"btoa": "^1.2.1",
 		"form-data": "^3.0.0",
-		"node-fetch": "^2.6.1"
+		"node-fetch": "^2.6.1",
+		"@octokit/rest": "^18.0.0"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.51.0",
