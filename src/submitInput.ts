@@ -5,9 +5,9 @@
 import * as vscode from 'vscode';
 import { QuickPickItem, window, Disposable, CancellationToken, QuickInputButton, QuickInput, ExtensionContext, QuickInputButtons, Uri } from 'vscode';
 
-import fetch from "node-fetch";
+import fetch, { Headers } from "node-fetch";
 import { Credentials } from './credentials';
-const FormData = require('form-data');
+import { URL } from './constants';
 
 
 export async function multiStepInput(context: ExtensionContext) {
@@ -116,24 +116,34 @@ export async function multiStepInput(context: ExtensionContext) {
 	await credentials.initialize(context);
 	const octokit = await credentials.getOctokit();
 	const userInfo = await octokit.users.getAuthenticated();
-	var formData = new FormData();
-	formData.append('code', startingText);
-	formData.append('idUser', userInfo.data.id);
-	formData.append('image', '');
-	formData.append('filename', activeFileName);
-	formData.append('create_by', '12');
-	formData.append('language', language);
-	formData.append('description', state.name);
-	formData.append('type', type);
-	fetch('https://cardenasvscode.000webhostapp.com/controllers/publish.php', {method: 'POST', body: formData})
+	const body = {
+		idUser: userInfo.data.id,
+		code: startingText,
+		image: '',
+		filename: activeFileName,
+		language: language,
+		description: state.name,
+		type: type
+	}
+    const options = {
+        method: 'POST',
+        headers: new Headers({'content-type': 'application/json'}),
+		body: JSON.stringify(body),
+        mode: 'no-cors'
+    };
+
+	fetch(`${URL}/templates`, options)
 	.then(response => response.json())
 	.then(data => {
+		if (data.errors && data.errors.length > 0) {
+			throw new Error(data.errors[0].text);
+		}
 		vscode.window.showInformationMessage(
 			activeFileName + " uploaded successfully"
 		);
 	}).catch(e => {
 		vscode.window.showErrorMessage(
-			e
+			e.message
 		);
 	})
 }

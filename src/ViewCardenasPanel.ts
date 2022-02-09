@@ -170,13 +170,19 @@ export class ViewCardenasPanel {
 			<html lang="en">
 			<head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"></link>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
 
                 <link href="${viewStyleUri}" rel="stylesheet" type="text/css" media="screen">
                 <script src="${viewScriptUri}"></script>
+
+                
+                <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.5.0/fetch.min.js"></script>
 			</head>
             <body style="margin: 0!important;padding:0!important;">
                 <div id="app" class="col-12 p-3">
@@ -185,7 +191,6 @@ export class ViewCardenasPanel {
                     ${this._story.filename}
                     <small>by ${this._story.create_by} using ${this._story.language}</small>
                 </h2>
-
                 <section class='code-editor' style="margin-top: 0px;">
                     <div class='controls'>
                         <span v-if="coping">Copied</span>
@@ -212,7 +217,13 @@ ${this._story.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                         </code>
                     </pre>
                 </section>
+                <!-- <div class="col-12 d-flex justify-content-center">
+                    <button class="btn btn-sm btn-danger" v-on:click="delete(item)">
+                        <i class="fa fa-trash"></i> Delete snippet
+                    </button>
+                </div> -->
                 </div>
+
 
                 <script nonce="${nonce}">
                     var app = new Vue({
@@ -226,9 +237,11 @@ ${this._story.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                             }
                         },
                         mounted() {
+                            vscode.postMessage({ type: 'onError', value: 'entre' });
                         }
                     })
                     new ClipboardJS('.copyButton');
+                    const vscode = acquireVsCodeApi();
                 </script>
             </body>
         </html>`;
