@@ -18,7 +18,7 @@
 
 body {
   font-family: open-sans, Arial, sans-serif;
-  background-color: #71D4B7;
+  background-color: transparent;
   font-size: 62.5%;
 }
 
@@ -221,7 +221,7 @@ pre[class*="language-"] {
 .token.tag,
 .token.constant,
 .token.symbol {
-  color: #71D4B7;
+  color: transparent;
 }
 
 .token.boolean,

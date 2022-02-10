@@ -8,7 +8,7 @@
 		"type": "git",
 		"url": "https://github.com/JuanseMastrangelo/Cardenas"
 	},
-	"version": "1.0.3",
+	"version": "2.0.4",
 	"engines": {
 		"vscode": "^1.51.0"
 	},
@@ -74,21 +74,22 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"dependencies": {
+		"@octokit/rest": "^18.0.0",
 		"btoa": "^1.2.1",
+		"file-system": "^2.2.2",
 		"form-data": "^3.0.0",
-		"node-fetch": "^2.6.1",
-		"@octokit/rest": "^18.0.0"
+		"node-fetch": "^2.6.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.51.0",
-		"@types/glob": "^7.1.3",
 		"@types/btoa": "^1.2.3",
+		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/node-fetch": "^2.5.7",
-		"eslint": "^7.9.0",
+		"@types/vscode": "^1.51.0",
 		"@typescript-eslint/eslint-plugin": "^4.1.1",
 		"@typescript-eslint/parser": "^4.1.1",
+		"eslint": "^7.9.0",
 		"glob": "^7.1.6",
 		"mocha": "^8.1.3",
 		"typescript": "^4.0.2",

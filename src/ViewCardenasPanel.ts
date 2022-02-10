@@ -195,8 +195,8 @@ export class ViewCardenasPanel {
                     <div class='controls'>
                         <span v-if="coping">Copied</span>
                         <i class="fa fa-clipboard fullscreen copyButton" v-on:click="copied()" data-clipboard-target="#foo"></i>
-                        <i class="fa fa-expand accordion"></i>
-                        <i class="fa fa-chevron-up accordion"></i>
+                        <!-- <i class="fa fa-expand accordion"></i>
+                        <i class="fa fa-chevron-up accordion"></i> -->
                     </div>
                     <div class='embed-nav'>
                     <ul class="m-0">

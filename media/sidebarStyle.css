@@ -107,3 +107,12 @@ body {
     font-size: 0.8rem;
     font-family: 'PT Mono', monospace;
   }
+
+.card {
+  background: rgba(100,100,100,.5);
+  color: white;
+}
+
+.card-footer {
+  background: rgba(200,200,200,.2);
+}
