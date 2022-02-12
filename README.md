@@ -21,7 +21,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/CardenasExtension/cardenas-client">
-    <img src="https://github.com/CardenasExtension/cardenas-client/blob/master/media/icon.png" alt="Logo" height="180">
+    <img src="https://i.ibb.co/q9v025b/Untitled.png" alt="Logo" height="180">
   </a>
 
   <h3 align="center">Cardenas Extension</h3>
