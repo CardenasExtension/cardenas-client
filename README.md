@@ -106,4 +106,4 @@ Created by [JuanseMastrangelo](https://github.com/JuanseMastrangelo)
 [issues-url]: https://github.com/CardenasExtension/cardenas-client/issues
 [license-shield]: https://img.shields.io/github/license/CardenasExtension/cardenas-client.svg?style=for-the-badge
 [license-url]: https://github.com/CardenasExtension/cardenas-client/blob/master/LICENSE.txt
-[product-screenshot]: https://i.ibb.co/bKx48rv/Screenshot-1.png
+[product-screenshot]: https://i.ibb.co/FYNfQMy/Cardenas-vs-Code-extension.png
