@@ -192,18 +192,14 @@ export class ViewCardenasPanel {
                     <small>by ${this._story.create_by} using ${this._story.language}</small>
                 </h2>
                 <section class='code-editor' style="margin-top: 0px;">
-                    <div class='controls'>
-                        <span v-if="coping">Copied</span>
-                        <i class="fa fa-clipboard fullscreen copyButton" v-on:click="copied()" data-clipboard-target="#foo"></i>
-                        <!-- <i class="fa fa-expand accordion"></i>
-                        <i class="fa fa-chevron-up accordion"></i> -->
-                    </div>
                     <div class='embed-nav'>
                     <ul class="m-0">
                         <li style="list-style: none;">
                         <a href='#html-box' class='active'>
                             ${this._story.language}
                         </a>
+                        <i class="fa fa-clipboard fullscreen copyButton" v-on:click="copied()" data-clipboard-target="#foo"></i>
+                        <span v-if="coping" class="copyText">Copied</span>
                     </ul>
                     <div class='logo-wrap'>
                         <a href='#' target='_blank' title='Edit on CodePen'>

@@ -86,8 +86,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
       console.log(err);
       throw err;
     }
-    data = data.replace('filename_of_css_file_in_your_html_file.css', styleSideBar.toString());
-    data = data.replace('/##userID##/ig', this.userInfo.data.id);
+    data = data.replace('./sidebarStyle.css', styleSideBar.toString());
+    data = data.replace('##userID##', this.userInfo.data.id);
     webview.html = data;
   }
 }

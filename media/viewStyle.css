@@ -96,30 +96,15 @@ body h1 a, body h1 a:visited, body h1 a:hover {
   height: calc(100% - 120px);
   margin: 20px;
 }
-.code-editor .controls {
-  background-color: #E8ECEF;
-  font-size: 10px;
+
+.code-editor .copyButton, .copyText {
   font-size: 1rem;
-  display: block;
-  padding: 15px;
-  text-align: right;
-  -webkit-border-top-left-radius: 6px;
-  -ms-border-top-left-radius: 6px;
-  -moz-border-top-left-radius: 6px;
-  -o-border-top-left-radius: 6px;
-  border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-  -ms-border-top-right-radius: 6px;
-  -moz-border-top-right-radius: 6px;
-  -o-border-top-right-radius: 6px;
-  border-top-right-radius: 6px;
-}
-.code-editor .controls i {
+  margin-left: 10px;
   color: #BAC1C9;
   cursor: pointer;
   margin-left: 15px;
 }
-.code-editor .controls i:hover {
+.code-editor .copyButton:hover {
   color: #818e9c;
 }
 .code-editor .embed-nav {
@@ -189,7 +174,7 @@ pre[class*="language-"] {
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-  background: #4e606c;
+  background: #323F4B;
 }
 
 /* Inline code */

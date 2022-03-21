@@ -48,12 +48,12 @@
   <ol>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
+<div align="center">
+    <img src="https://i.ibb.co/WxmGsg4/taller-ttit-web-Visual-Studio-Code-2022-03-21-13-58-24.gif" alt="Cardenas VsCode Extension" height="400">
+</div>
 <br />
 
 <!-- Usage -->
@@ -106,4 +106,3 @@ Created by [JuanseMastrangelo](https://github.com/JuanseMastrangelo)
 [issues-url]: https://github.com/CardenasExtension/cardenas-client/issues
 [license-shield]: https://img.shields.io/github/license/CardenasExtension/cardenas-client.svg?style=for-the-badge
 [license-url]: https://github.com/CardenasExtension/cardenas-client/blob/master/LICENSE.txt
-[product-screenshot]: https://i.ibb.co/bKx48rv/Screenshot-1.png
