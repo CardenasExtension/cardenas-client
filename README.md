@@ -52,7 +52,7 @@
 </details>
 
 <div align="center">
-    <img src="https://i.ibb.co/WxmGsg4/taller-ttit-web-Visual-Studio-Code-2022-03-21-13-58-24.gif" alt="Cardenas VsCode Extension" height="400">
+    <img src="https://i.ibb.co/nzsvbpL/ezgif-5-c44f7c1488.gif" alt="Cardenas VsCode Extension" height="400">
 </div>
 <br />
 

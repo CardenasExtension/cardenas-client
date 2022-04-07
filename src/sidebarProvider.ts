@@ -47,7 +47,8 @@ export class StorySidebarProvider implements vscode.WebviewViewProvider {
           if (!data.value) {
             return;
           }
-          ViewCardenasPanel.createOrShow(this._extensionUri, data.value);
+          vscode.workspace.openTextDocument({content: data.value.code, language: data.value.language});
+          // ViewCardenasPanel.createOrShow(this._extensionUri, data.value);
           break;
         }
         case "onError": {
