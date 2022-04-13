@@ -54,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 		if (!vscode.window.activeTextEditor) {
 		  vscode.window.showInformationMessage(
-			"Open a file to save (CARDENAS)"
+			"Open a file to save"
 		  );
 		  return;
 		}

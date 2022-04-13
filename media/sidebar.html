@@ -60,14 +60,17 @@
           <div class='card' v-for="item in items" v-bind:key="item.id">
             <div v-if="item.image !== ''" class='card-img-top' :style="{'background-image': 'url('+ item.image +')'}"></div>
             <div class='card-block'>
-              <p>
+              <p class="mb-1">
                 <small class='card-text text-white'>{{item.description}}</small>
               </p>
               <div class="row col-12 mb-2">
-                <button class="btn btn-sm btn-secondary mr-2" disabled>{{item.language}}</button>
-                <button class="btn btn-sm btn-secondary" disabled>{{item.type}}</button>
+                <button class="btn btn-sm btn-secondary mr-2" style="font-size: 12px;
+                height: 28px;" disabled>{{item.language}}</button>
+                <button class="btn btn-sm btn-secondary" style="font-size: 12px;
+                height: 28px;" disabled>{{item.type}}</button>
               </div>
-              <button class="btn btn-sm btn-primary float-right" v-on:click="selectOne(item)">
+              <button class="btn btn-sm btn-primary mt-1 float-right" style="font-size: 12px;
+              height: 28px;" v-on:click="selectOne(item)">
                 View Code
               </button>
             </div>
